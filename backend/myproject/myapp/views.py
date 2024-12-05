@@ -9,25 +9,24 @@ from PIL import Image
 @csrf_exempt
 def process_frame(request):
     if request.method == 'POST':
-        # Get the base64 frame from frontend
         data = request.POST.get('frame')
         
-        # Decode the base64 frame
-        img_data = base64.b64decode(data.split(',')[1])  # Remove "data:image/jpeg;base64,"
+    
+        img_data = base64.b64decode(data.split(',')[1]) 
         img = Image.open(BytesIO(img_data))
-        img = np.array(img)  # Convert to numpy array
+        img = np.array(img) 
 
-        # Convert image from RGB to BGR (OpenCV format)
+        
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
-        # Draw a green box on the frame
+        
         start_point = (100, 100)
         end_point = (500, 400)
-        color = (0, 255, 0)  # Green color
+        color = (0, 255, 0) 
         thickness = 3
         img_with_box = cv2.rectangle(img, start_point, end_point, color, thickness)
 
-        # Convert back to base64
+        
         _, buffer = cv2.imencode('.jpg', img_with_box)
         processed_frame = base64.b64encode(buffer).decode('utf-8')
 
